@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forte · Design Your Role Around AI</title>
+<style>
+  :root{
+    --bg:#f7f4ee;--card:#fff;--ink:#1f2430;--muted:#5b6270;--line:#e6e1d7;
+    --primary:#4338ca;--primary-soft:#eef0ff;--accent:#b45309;--accent-soft:#fdf1e0;
+    --ok:#15803d;--ideas:#0f766e;--ideas-soft:#e6f5f2;--warn:#b91c1c;--warn-soft:#fdeaea;
+    --radius:14px;--shadow:0 1px 3px rgba(31,36,48,.06),0 8px 24px rgba(31,36,48,.05);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-size:17px;line-height:1.55;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:28px 20px 90px}
+  header.top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+  .brand{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--primary);font-weight:700}
+  h1{font-size:30px;line-height:1.15;margin:6px 0 4px}
+  .sub{color:var(--muted);font-size:16px;margin:0}
+  .langtoggle{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+  .langtoggle button{border:0;background:none;padding:7px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+  .langtoggle button.active{background:var(--primary);color:#fff}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin:16px 0}
+  .sect-h{font-size:20px;font-weight:700;margin:0 0 6px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .help{color:var(--muted);font-size:15px;margin:0 0 14px}
+  label.fld{display:block;font-weight:600;font-size:14px;margin:0 0 6px}
+  input[type=text],textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;font-size:15.5px;color:var(--ink);background:#fffdf9;resize:vertical}
+  input[type=text]:focus,textarea:focus{outline:2px solid var(--primary-soft);border-color:var(--primary)}
+  textarea{min-height:64px}
+  .btn{border:0;border-radius:10px;padding:11px 16px;font:inherit;font-weight:700;font-size:14.5px;cursor:pointer}
+  .btn.primary{background:var(--primary);color:#fff}
+  .btn.soft{background:var(--primary-soft);color:var(--primary)}
+  .btn.ideasb{background:var(--ideas-soft);color:var(--ideas)}
+  .btn:disabled{opacity:.55;cursor:default}
+  .btn.big{display:block;width:100%;padding:16px;font-size:18px;margin-top:8px}
+  /* ladder */
+  .ladder{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:2px 0 4px}
+  .rung{border:1px solid var(--line);border-radius:11px;padding:11px 12px;background:#fffdf9}
+  .rung b{display:block;font-size:14px}
+  .rung.assist b{color:#6b7280}.rung.redesign b{color:var(--accent)}.rung.delegate b{color:var(--ideas)}
+  .rung span{font-size:13px;color:var(--muted)}
+  /* split rows */
+  .srow{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px;background:#fffdf9;position:relative}
+  .srow .cat{margin-bottom:8px}
+  .srow .pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .srow .pair label{color:var(--primary)}
+  .srow .pair .aicol label{color:var(--ideas)}
+  .srow .rm{position:absolute;top:8px;right:10px;border:0;background:none;color:var(--muted);font-size:20px;cursor:pointer;line-height:1}
+  .arrowlbl{text-align:center;color:var(--muted);font-size:12px;margin:-4px 0 8px}
+  /* ideas / ai panels */
+  #ideacard{border-color:#bfe3dc;background:linear-gradient(180deg,#f4fbf9,#fff)}
+  #ideacard .sect-h{color:var(--ideas)}
+  .isug{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px dashed #e3efec}
+  .isug:first-of-type{border-top:0}
+  .isug .txt{flex:1;font-size:15px}
+  .isug button{flex:0 0 auto;background:var(--ideas-soft);color:var(--ideas);border:0;border-radius:8px;padding:6px 10px;font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-right:6px;vertical-align:1px}
+  .tag.ai{color:var(--ideas);background:var(--ideas-soft)}
+  .tag.miss{color:var(--accent);background:var(--accent-soft)}
+  .muted{color:var(--muted)}
+  .spin{display:inline-block;font-size:13px;color:var(--muted)}
+  .err{background:var(--warn-soft);color:var(--warn);border-radius:9px;padding:9px 12px;font-size:14px;margin-top:8px}
+  .aiout{min-height:120px;background:#fbfaf6}
+  .row-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+  .codebox{max-width:240px}
+  #summary{min-height:220px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:14px;background:#fbfaf6}
+  .copybtn{background:var(--ok);color:#fff;border:0;border-radius:10px;padding:11px 20px;font:inherit;font-weight:700;cursor:pointer}
+  .copyrow{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+  .pastenote{color:var(--muted);font-size:14px}
+  #outwrap{display:none}#outwrap.show{display:block}
+  .foot{color:var(--muted);font-size:13px;text-align:center;margin-top:26px}
+  @media(max-width:640px){.ladder,.srow .pair{grid-template-columns:1fr}h1{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brand">Forte · AI Upskilling</div>
+      <h1 data-i18n="title">Design your role around AI</h1>
+      <p class="sub" data-i18n="sub">Picture the most ambitious version of your job in 6 months — with a live advisor helping you aim high.</p>
+    </div>
+    <div class="langtoggle" role="group" aria-label="Language">
+      <button id="lang-en" class="active" onclick="setLang('en')">EN</button>
+      <button id="lang-es" onclick="setLang('es')">ES</button>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="pair" style="display:grid;grid-template-columns:1fr 240px;gap:14px">
+      <div><label class="fld" data-i18n="name">Your name &amp; role</label>
+        <input type="text" id="name" data-ph="nameph" placeholder="e.g. Daniela — Brand &amp; Design"></div>
+      <div class="codebox"><label class="fld" data-i18n="code">Team code (if asked)</label>
+        <input type="text" id="code" placeholder="—"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sect-h" data-i18n="s1h">1 · Your role in 6 months</div>
+    <p class="help" data-i18n="s1help">In 2–3 sentences: what does your work look like when AI is doing the heavy lifting? Be bold.</p>
+    <textarea id="role" data-ph="s1ph" placeholder="In 6 months, my role is..."></textarea>
+    <div class="row-actions">
+      <button class="btn soft" id="extractBtn" onclick="doExtract()" data-i18n="extract">Break my role into parts ↓</button>
+      <span id="extractStatus" class="spin"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sect-h" data-i18n="s2h">2 · The split</div>
+    <p class="help" data-i18n="s2help">One row per part of your role. On the left, what you do; on the right, what AI does. Aim for the higher rungs:</p>
+    <div class="ladder">
+      <div class="rung assist"><b data-i18n="assist">Assist</b><span data-i18n="assistex">AI helps in chat — drafts, summarizes. The floor.</span></div>
+      <div class="rung redesign"><b data-i18n="redesign">Redesign</b><span data-i18n="redesignex">A whole workflow runs end to end — input → output.</span></div>
+      <div class="rung delegate"><b data-i18n="delegate">Delegate</b><span data-i18n="delegateex">An agent does the full task, flags only exceptions.</span></div>
+    </div>
+    <div id="splitRows" style="margin-top:14px"></div>
+    <button class="btn soft" onclick="addRow()" data-i18n="addrow">+ Add a part of my role</button>
+  </div>
+
+  <div class="card" id="ideacard">
+    <div class="sect-h"><span data-i18n="sugh">💡 Live ideas</span> <span id="ideasStatus" class="spin"></span></div>
+    <p class="help" data-i18n="sughelp">Updates as you type — ambitious things AI could take on, and parts of your role you haven't added. Click + to drop one in.</p>
+    <div id="suggestions"><p class="muted" data-i18n="sugempty">Start writing the split above, and ideas will appear here.</p></div>
+    <div class="row-actions" style="margin-top:10px">
+      <button class="btn ideasb" id="gapsBtn" onclick="doGaps()" data-i18n="gapsbtn">Find gaps in my role</button>
+      <span id="gapsStatus" class="spin"></span>
+    </div>
+    <div id="gapsOut"></div>
+  </div>
+
+  <div class="card">
+    <div class="sect-h"><span data-i18n="s3h">3 · What needs to be true</span> <span id="prereqStatus" class="spin"></span></div>
+    <p class="help" data-i18n="s3help">Let the advisor draft the prerequisites for each "AI does" item — then edit them so they're yours.</p>
+    <button class="btn primary" id="prereqBtn" onclick="doPrereqs()" data-i18n="prereqbtn">Generate prerequisites</button>
+    <textarea id="prereqOut" class="aiout" style="margin-top:12px" data-ph="prereqph" placeholder="Your prerequisites will appear here — editable."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="sect-h"><span data-i18n="s4h">4 · What to build &amp; learn</span> <span id="planStatus" class="spin"></span></div>
+    <p class="help" data-i18n="s4help">A plan you could start tomorrow — first builds, a training path, and an order to do them in.</p>
+    <button class="btn primary" id="planBtn" onclick="doPlan()" data-i18n="planbtn">Generate my build &amp; learn plan</button>
+    <textarea id="planOut" class="aiout" style="margin-top:12px" data-ph="planph" placeholder="Your plan will appear here — editable."></textarea>
+  </div>
+
+  <div class="card">
+    <div class="sect-h" data-i18n="s5h">5 · Your one line</div>
+    <p class="help" data-i18n="s5help">The only thing you'll say out loud. Short and sweet.</p>
+    <input type="text" id="own" data-ph="ownph" placeholder="The one thing I most want AI to own is..." style="margin-bottom:10px">
+    <input type="text" id="need" data-ph="needph" placeholder="...and the first thing it needs is...">
+  </div>
+
+  <button class="btn primary big" onclick="generate()" data-i18n="gen">Generate my summary</button>
+
+  <div id="outwrap" class="card">
+    <div class="sect-h" data-i18n="outh">Your summary</div>
+    <p class="help" data-i18n="outhelp">Copy this and paste it into the "6-Month Vision" thread in #ai-upskilling.</p>
+    <textarea id="summary" readonly></textarea>
+    <div class="copyrow">
+      <button class="copybtn" id="copybtn" onclick="copyEl('summary','copybtn')" data-i18n="copy">Copy</button>
+      <span class="pastenote" data-i18n="pastenote">→ paste into #ai-upskilling</span>
+    </div>
+  </div>
+
+  <p class="foot">Forte AI Upskilling · Phase 2</p>
+</div>
+
+<script>
+var API = (window.API_BASE || '') + '/.netlify/functions/assist';
+var currentLang='en';
+var T={
+ en:{title:"Design your role around AI",sub:"Picture the most ambitious version of your job in 6 months — with a live advisor helping you aim high.",
+  name:"Your name & role",nameph:"e.g. Daniela — Brand & Design",code:"Team code (if asked)",
+  s1h:"1 · Your role in 6 months",s1help:"In 2–3 sentences: what does your work look like when AI is doing the heavy lifting? Be bold.",s1ph:"In 6 months, my role is...",
+  extract:"Break my role into parts ↓",
+  s2h:"2 · The split",s2help:"One row per part of your role. On the left, what you do; on the right, what AI does. Aim for the higher rungs:",
+  assist:"Assist",assistex:"AI helps in chat — drafts, summarizes. The floor.",redesign:"Redesign",redesignex:"A whole workflow runs end to end — input → output.",delegate:"Delegate",delegateex:"An agent does the full task, flags only exceptions.",
+  cat:"Part of my role",human:"What I do",humanph:"the judgment / taste / relationship I keep",ai:"What AI does",aiph:"aim high — a workflow or an agent, not just chat",addrow:"+ Add a part of my role",
+  sugh:"💡 Live ideas",sughelp:"Updates as you type — ambitious things AI could take on, and parts of your role you haven't added. Click + to drop one in.",sugempty:"Start writing the split above, and ideas will appear here.",
+  aicould:"AI could",missing:"Missing",addai:"+ Add",gapsbtn:"Find gaps in my role",under:"Aim higher",
+  s3h:"3 · What needs to be true",s3help:'Let the advisor draft the prerequisites for each "AI does" item — then edit them so they\'re yours.',prereqbtn:"Generate prerequisites",prereqph:"Your prerequisites will appear here — editable.",
+  s4h:"4 · What to build & learn",s4help:"A plan you could start tomorrow — first builds, a training path, and an order to do them in.",planbtn:"Generate my build & learn plan",planph:"Your plan will appear here — editable.",
+  s5h:"5 · Your one line",s5help:"The only thing you'll say out loud. Short and sweet.",ownph:"The one thing I most want AI to own is...",needph:"...and the first thing it needs is...",
+  gen:"Generate my summary",outh:"Your summary",outhelp:'Copy this and paste it into the "6-Month Vision" thread in #ai-upskilling.',copy:"Copy",copied:"Copied!",pastenote:"→ paste into #ai-upskilling",
+  thinking:"thinking…",errgen:"Something went wrong. Try again."},
+ es:{title:"Diseña tu rol alrededor de la IA",sub:"Imagina la versión más ambiciosa de tu trabajo en 6 meses — con un asesor en vivo que te ayuda a apuntar alto.",
+  name:"Tu nombre y rol",nameph:"ej. Daniela — Marca y Diseño",code:"Código de equipo (si lo piden)",
+  s1h:"1 · Tu rol en 6 meses",s1help:"En 2–3 frases: ¿cómo se ve tu trabajo cuando la IA hace el trabajo pesado? Sé ambicioso.",s1ph:"En 6 meses, mi rol es...",
+  extract:"Divide mi rol en partes ↓",
+  s2h:"2 · La división",s2help:"Una fila por cada parte de tu rol. A la izquierda, lo que haces tú; a la derecha, lo que hace la IA. Apunta a los niveles altos:",
+  assist:"Asiste",assistex:"La IA ayuda en el chat — redacta, resume. El piso.",redesign:"Rediseña",redesignex:"Un flujo completo corre de principio a fin — entrada → salida.",delegate:"Delega",delegateex:"Un agente hace toda la tarea y solo marca excepciones.",
+  cat:"Parte de mi rol",human:"Qué hago yo",humanph:"el criterio / gusto / relación que conservo",ai:"Qué hace la IA",aiph:"apunta alto — un flujo o un agente, no solo chat",addrow:"+ Agregar una parte de mi rol",
+  sugh:"💡 Ideas en vivo",sughelp:"Se actualiza mientras escribes — cosas ambiciosas que la IA podría asumir y partes de tu rol que no agregaste. Haz clic en + para añadir una.",sugempty:"Empieza a escribir la división arriba, y aquí aparecerán ideas.",
+  aicould:"La IA podría",missing:"Falta",addai:"+ Añadir",gapsbtn:"Encuentra vacíos en mi rol",under:"Apunta más alto",
+  s3h:"3 · Qué debe existir primero",s3help:"Deja que el asesor redacte los requisitos de cada tarea de la IA — luego edítalos para que sean tuyos.",prereqbtn:"Generar requisitos",prereqph:"Tus requisitos aparecerán aquí — editables.",
+  s4h:"4 · Qué construir y aprender",s4help:"Un plan que podrías empezar mañana — primeras construcciones, una ruta de aprendizaje y un orden.",planbtn:"Generar mi plan de construir y aprender",planph:"Tu plan aparecerá aquí — editable.",
+  s5h:"5 · Tu única línea",s5help:"Lo único que dirás en voz alta. Corto y claro.",ownph:"Lo que más quiero que la IA haga es...",needph:"...y lo primero que necesita es...",
+  gen:"Generar mi resumen",outh:"Tu resumen",outhelp:'Copia esto y pégalo en el hilo "Visión a 6 meses" en #ai-upskilling.',copy:"Copiar",copied:"¡Copiado!",pastenote:"→ pégalo en #ai-upskilling",
+  thinking:"pensando…",errgen:"Algo salió mal. Inténtalo de nuevo."}
+};
+function d(){return T[currentLang];}
+function setLang(l){currentLang=l;
+  document.getElementById('lang-en').classList.toggle('active',l==='en');
+  document.getElementById('lang-es').classList.toggle('active',l==='es');
+  document.documentElement.lang=l;var dd=T[l];
+  document.querySelectorAll('[data-i18n]').forEach(function(el){var k=el.getAttribute('data-i18n');if(dd[k]!==undefined)el.textContent=dd[k];});
+  document.querySelectorAll('[data-ph]').forEach(function(el){var k=el.getAttribute('data-ph');if(dd[k]!==undefined)el.setAttribute('placeholder',dd[k]);});
+  document.querySelectorAll('#splitRows .srow').forEach(relabelRow);
+}
+
+/* ---------- split rows ---------- */
+function addRow(category,human,ai){
+  var dd=d();
+  var row=document.createElement('div'); row.className='srow';
+  row.innerHTML=
+    '<button class="rm" title="remove" onclick="this.parentNode.remove();scheduleIdeas()">×</button>'+
+    '<div class="cat"><label class="fld lbl-cat">'+dd.cat+'</label><input type="text" class="p-cat"></div>'+
+    '<div class="pair"><div class="humcol"><label class="fld lbl-hum">'+dd.human+'</label><textarea class="p-hum"></textarea></div>'+
+    '<div class="aicol"><label class="fld lbl-ai">'+dd.ai+'</label><textarea class="p-ai"></textarea></div></div>';
+  document.getElementById('splitRows').appendChild(row);
+  if(category!==undefined) row.querySelector('.p-cat').value=category;
+  if(human!==undefined) row.querySelector('.p-hum').value=human;
+  if(ai!==undefined) row.querySelector('.p-ai').value=ai;
+  relabelRow(row);
+  row.querySelectorAll('input,textarea').forEach(function(el){
+    el.addEventListener('input',scheduleIdeas);
+    if(el.classList.contains('p-hum')) el.setAttribute('placeholder',d().humanph);
+    if(el.classList.contains('p-ai')) el.setAttribute('placeholder',d().aiph);
+  });
+  return row;
+}
+function relabelRow(row){var dd=d();
+  row.querySelector('.lbl-cat').textContent=dd.cat;
+  row.querySelector('.lbl-hum').textContent=dd.human;
+  row.querySelector('.lbl-ai').textContent=dd.ai;
+  row.querySelector('.p-hum').setAttribute('placeholder',dd.humanph);
+  row.querySelector('.p-ai').setAttribute('placeholder',dd.aiph);
+}
+function collectRows(){var out=[];
+  document.querySelectorAll('#splitRows .srow').forEach(function(r){
+    var c=r.querySelector('.p-cat').value.trim(),h=r.querySelector('.p-hum').value.trim(),a=r.querySelector('.p-ai').value.trim();
+    if(c||h||a) out.push({category:c,human:h,ai:a});
+  });return out;}
+
+/* ---------- API ---------- */
+async function callAPI(action,extra){
+  var body=Object.assign({action:action,lang:currentLang,code:(document.getElementById('code').value||'').trim(),
+    role:document.getElementById('role').value.trim(),rows:collectRows()},extra||{});
+  var r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+  var j=await r.json().catch(function(){return {error:'Bad response'};});
+  if(!r.ok||j.error) throw new Error(j.error||('HTTP '+r.status));
+  return j.data;
+}
+function setStatus(id,txt){document.getElementById(id).textContent=txt||'';}
+function showErr(hostId,msg){var host=document.getElementById(hostId);var e=document.createElement('div');e.className='err';e.textContent=msg;host.appendChild(e);}
+
+/* ---------- extract ---------- */
+async function doExtract(){
+  var b=document.getElementById('extractBtn');b.disabled=true;setStatus('extractStatus',d().thinking);
+  try{var data=await callAPI('extract');(data.parts||[]).forEach(function(p){addRow(p,'','');});scheduleIdeas();}
+  catch(e){alert(d().errgen);}
+  finally{b.disabled=false;setStatus('extractStatus','');}
+}
+
+/* ---------- live ideas ---------- */
+var ideasTimer=null,ideasSeq=0;
+function scheduleIdeas(){clearTimeout(ideasTimer);ideasTimer=setTimeout(runIdeas,900);}
+async function runIdeas(){
+  var rows=collectRows();var host=document.getElementById('suggestions');
+  if(rows.length===0){host.innerHTML='<p class="muted">'+d().sugempty+'</p>';return;}
+  var seq=++ideasSeq;setStatus('ideasStatus',d().thinking);
+  try{var data=await callAPI('ideas');if(seq!==ideasSeq)return;renderIdeas(data);}
+  catch(e){if(seq===ideasSeq){host.innerHTML='';showErr('suggestions',d().errgen);}}
+  finally{if(seq===ideasSeq)setStatus('ideasStatus','');}
+}
+function renderIdeas(data){var host=document.getElementById('suggestions');host.innerHTML='';var dd=d();
+  (data.aiCould||[]).forEach(function(s){host.appendChild(sug('ai',dd.aicould,s,dd.addai,function(){addRow('','',s);scheduleIdeas();}));});
+  (data.missing||[]).forEach(function(s){host.appendChild(sug('miss',dd.missing,s,dd.addai,function(){addRow(s,'','');scheduleIdeas();}));});
+  if(!host.children.length){host.innerHTML='<p class="muted">'+dd.sugempty+'</p>';}
+}
+function sug(kind,tagTxt,body,btnTxt,onClick){
+  var row=document.createElement('div');row.className='isug';
+  var t=document.createElement('div');t.className='txt';
+  var tag=document.createElement('span');tag.className='tag '+kind;tag.textContent=tagTxt;
+  t.appendChild(tag);t.appendChild(document.createTextNode(body));row.appendChild(t);
+  var b=document.createElement('button');b.textContent=btnTxt;b.addEventListener('click',onClick);row.appendChild(b);
+  return row;
+}
+
+/* ---------- gaps ---------- */
+async function doGaps(){
+  var b=document.getElementById('gapsBtn');b.disabled=true;setStatus('gapsStatus',d().thinking);
+  var host=document.getElementById('gapsOut');host.innerHTML='';var dd=d();
+  try{var data=await callAPI('gaps');
+    (data.missing||[]).forEach(function(m){host.appendChild(sug('miss',dd.missing,m.area+(m.why?' — '+m.why:''),dd.addai,function(){addRow(m.area,'','');scheduleIdeas();}));});
+    (data.underAiming||[]).forEach(function(u){host.appendChild(sug('ai',dd.under,(u.row?u.row+': ':'')+u.suggestion,dd.addai,function(){addRow('','',u.suggestion);scheduleIdeas();}));});
+    if(!host.children.length){host.innerHTML='<p class="muted">✓</p>';}
+  }catch(e){showErr('gapsOut',d().errgen);}
+  finally{b.disabled=false;setStatus('gapsStatus','');}
+}
+
+/* ---------- prereqs ---------- */
+async function doPrereqs(){
+  var b=document.getElementById('prereqBtn');b.disabled=true;setStatus('prereqStatus',d().thinking);
+  try{var data=await callAPI('prereqs');var lines=[];
+    (data.prereqs||[]).forEach(function(p){lines.push('• '+p.aiItem);(p.needs||[]).forEach(function(n){lines.push('   – '+n);});});
+    document.getElementById('prereqOut').value=lines.join('\n');
+  }catch(e){alert(d().errgen);}
+  finally{b.disabled=false;setStatus('prereqStatus','');}
+}
+
+/* ---------- plan ---------- */
+async function doPlan(){
+  var b=document.getElementById('planBtn');b.disabled=true;setStatus('planStatus',d().thinking);
+  try{var data=await callAPI('plan',{prereqs:document.getElementById('prereqOut').value});var L=[];var dd=d();
+    if(data.firstBuilds&&data.firstBuilds.length){L.push((currentLang==='es'?'PRIMERAS CONSTRUCCIONES':'FIRST BUILDS'));data.firstBuilds.forEach(function(x){L.push('• '+x.title+(x.firstStep?'\n   → '+x.firstStep:''));});L.push('');}
+    if(data.trainings&&data.trainings.length){L.push((currentLang==='es'?'CAPACITACIONES':'TRAININGS'));data.trainings.forEach(function(x){L.push('• '+x.title+(x.why?' — '+x.why:'')+(x.url?'\n   '+x.url:''));});L.push('');}
+    if(data.sequence&&data.sequence.length){L.push((currentLang==='es'?'ORDEN':'SEQUENCE'));data.sequence.forEach(function(s,i){L.push((i+1)+'. '+s);});}
+    document.getElementById('planOut').value=L.join('\n');
+  }catch(e){alert(d().errgen);}
+  finally{b.disabled=false;setStatus('planStatus','');}
+}
+
+/* ---------- summary ---------- */
+function generate(){
+  var H=currentLang==='es'?{t:"VISIÓN A 6 MESES — FORTE",role:"MI ROL EN 6 MESES",split:"LA DIVISIÓN",ai:"IA",me:"Yo",pre:"QUÉ DEBE EXISTIR",plan:"CONSTRUIR Y APRENDER",head:"MI LÍNEA",own:"Quiero que la IA haga",need:"Primero necesita"}:
+    {t:"6-MONTH VISION — FORTE",role:"MY ROLE IN 6 MONTHS",split:"THE SPLIT",ai:"AI",me:"I",pre:"WHAT NEEDS TO BE TRUE",plan:"BUILD & LEARN",head:"MY HEADLINE",own:"I want AI to own",need:"First it needs"};
+  var v=function(id){return (document.getElementById(id).value||'').trim();};
+  var L=[H.t,v('name')||'—','',H.role,v('role')||'—','',H.split];
+  var rows=collectRows();
+  if(rows.length){rows.forEach(function(r){L.push('▸ '+(r.category||'—'));L.push('   '+H.me+': '+(r.human||'—'));L.push('   '+H.ai+': '+(r.ai||'—'));});}else{L.push('—');}
+  L.push('');L.push(H.pre);L.push(v('prereqOut')||'—');
+  L.push('');L.push(H.plan);L.push(v('planOut')||'—');
+  L.push('');L.push(H.head);L.push(H.own+': '+(v('own')||'—'));L.push(H.need+': '+(v('need')||'—'));
+  document.getElementById('summary').value=L.join('\n');
+  document.getElementById('outwrap').classList.add('show');
+  document.getElementById('outwrap').scrollIntoView({behavior:'smooth'});
+}
+
+/* ---------- copy ---------- */
+function copyEl(id,btnId){var ta=document.getElementById(id);ta.removeAttribute('readonly');ta.select();ta.setSelectionRange(0,99999);
+  var done=false;try{done=document.execCommand('copy');}catch(e){}
+  if(navigator.clipboard){navigator.clipboard.writeText(ta.value).then(function(){flash(btnId);},function(){});}
+  ta.setAttribute('readonly','');if(done)flash(btnId);}
+function flash(btnId){var b=document.getElementById(btnId);var o=d().copy;b.textContent=d().copied;setTimeout(function(){b.textContent=o;},1500);}
+
+/* init: two starter rows */
+addRow();addRow();
+</script>
+</body>
+</html>

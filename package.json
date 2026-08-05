@@ -1,0 +1,9 @@
+{
+  "name": "forte-vision-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Forte AI Upskilling — dynamic 6-month vision worksheet with a live LLM advisor.",
+  "engines": {
+    "node": ">=18"
+  }
+}
